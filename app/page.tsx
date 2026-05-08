@@ -2,7 +2,6 @@ export const dynamic = "force-dynamic";
 import Image from "next/image";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import ProductCarousel from "@/components/product-carousel";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 
 const PRODUCTS_PER_PAGE = 8;
@@ -158,9 +157,19 @@ export default async function HomePage({
               </div>
             </div>
 
-            <div className="animate-fade-up" style={{ animationDelay: "0.3s" }}>
-              <ProductCarousel />
-              <p className="text-[8px] tracking-[0.45em] uppercase text-gold mt-2 text-center">
+            <div className="flex flex-col items-center justify-center animate-fade-up" style={{ animationDelay: "0.3s" }}>
+              <div className="w-full max-w-[460px] aspect-[16/9] flex items-center justify-center relative overflow-hidden" style={{ backgroundColor: "#cfc1b6" }}>
+                <div className="absolute inset-4 border border-sandstone opacity-40 pointer-events-none" />
+                <Image
+                  src="/logo.png"
+                  alt="LAAE"
+                  width={400}
+                  height={225}
+                  className="w-[75%] object-contain"
+                  priority
+                />
+              </div>
+              <p className="text-[8px] tracking-[0.45em] uppercase text-gold mt-3.5 text-center">
                 Fine Jewellery · Bangladesh
               </p>
             </div>
