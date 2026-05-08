@@ -1,10 +1,10 @@
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "../generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -43,20 +43,20 @@ model Product {
 }
 
 model Order {
-  id                String      @id @default(cuid())
-  user              User?       @relation(fields: [userId], references: [id])
+  id                String        @id @default(cuid())
+  user              User?         @relation(fields: [userId], references: [id])
   userId            String?
   name              String
   phone             String
   address           String
   total             Float
-  discountBreakdown String      // JSON array
-  status            OrderStatus @default(PENDING)
+  discountBreakdown String        // JSON array
+  status            OrderStatus   @default(PENDING)
   paymentMethod     PaymentMethod @default(COD)
   bkashRef          String?
-  deliveryCharge    Float       @default(100)
+  deliveryCharge    Float         @default(100)
   orderItems        OrderItem[]
-  createdAt         DateTime    @default(now())
+  createdAt         DateTime      @default(now())
 }
 
 model OrderItem {
@@ -71,11 +71,11 @@ model OrderItem {
 }
 
 model SiteConfig {
-  id             String  @id @default(cuid())
-  siteTitle      String  @default("LAAE Jewelry")
-  bkashNumber    String  @default("01XXXXXXXXX")
+  id             String   @id @default(cuid())
+  siteTitle      String   @default("LAAE Jewelry")
+  bkashNumber    String   @default("01XXXXXXXXX")
   bkashQRCode    String?
-  deliveryCharge Float   @default(100)
+  deliveryCharge Float    @default(100)
   updatedAt      DateTime @updatedAt
 }
 

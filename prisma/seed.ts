@@ -1,122 +1,96 @@
-import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcryptjs";
+import { PrismaClient } from "../generated/prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { Pool } from "pg";
 
-const prisma = new PrismaClient();
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const adapter = new PrismaPg(pool);
+const prisma = new PrismaClient({ adapter });
 
 async function main() {
-  // Create admin user
-  const adminPassword = await bcrypt.hash("admin123", 10);
-  await prisma.user.upsert({
-    where: { email: "admin@laae.com" },
+  // Categories
+  const bracelet = await prisma.category.upsert({
+    where: { slug: "bracelet" },
+    update: {},
+    create: { name: "Bracelet", slug: "bracelet", image: "/images/categories/bracelets.jpg" },
+  });
+  const rings = await prisma.category.upsert({
+    where: { slug: "rings" },
+    update: {},
+    create: { name: "Rings", slug: "rings", image: "/images/categories/rings.jpg" },
+  });
+  const earRings = await prisma.category.upsert({
+    where: { slug: "ear-rings" },
+    update: {},
+    create: { name: "Ear Rings", slug: "ear-rings", image: "/images/categories/earrings.jpg" },
+  });
+
+  // Products
+  await prisma.product.upsert({
+    where: { slug: "gold-diamond-ring" },
     update: {},
     create: {
-      name: "Admin",
-      email: "admin@laae.com",
-      password: adminPassword,
-      role: "ADMIN",
+      name: "Gold Diamond Ring",
+      slug: "gold-diamond-ring",
+      price: 12500,
+      stock: 10,
+      images: JSON.stringify(["/images/products/ring-1.jpg"]),
+      featured: true,
+      categoryId: rings.id,
+    },
+  });
+  await prisma.product.upsert({
+    where: { slug: "arc-bangle" },
+    update: {},
+    create: {
+      name: "Arc Bangle",
+      slug: "arc-bangle",
+      price: 7500,
+      stock: 10,
+      images: JSON.stringify(["/images/products/bangle-1.jpg"]),
+      featured: true,
+      categoryId: bracelet.id,
+    },
+  });
+  await prisma.product.upsert({
+    where: { slug: "crystal-drop-earrings" },
+    update: {},
+    create: {
+      name: "Crystal Drop Earrings",
+      slug: "crystal-drop-earrings",
+      price: 4200,
+      stock: 10,
+      images: JSON.stringify(["/images/products/earrings-1.jpg"]),
+      featured: true,
+      categoryId: earRings.id,
+    },
+  });
+  await prisma.product.upsert({
+    where: { slug: "pearl-pendant" },
+    update: {},
+    create: {
+      name: "Pearl Pendant",
+      slug: "pearl-pendant",
+      price: 5800,
+      stock: 10,
+      images: JSON.stringify(["/images/products/pendant-1.jpg"]),
+      featured: true,
+      categoryId: rings.id,
     },
   });
 
-  // Create default site config
+  // SiteConfig
   await prisma.siteConfig.upsert({
-    where: { id: "1" },
+    where: { id: "default" },
     update: {},
     create: {
-      id: "1",
+      id: "default",
       siteTitle: "LAAE Jewelry",
       bkashNumber: "01XXXXXXXXX",
       deliveryCharge: 100,
     },
   });
 
-  // Create sample categories
-  const categories = [
-    { name: "Rings", slug: "rings", description: "Elegant rings for every occasion" },
-    { name: "Necklaces", slug: "necklaces", description: "Stunning necklaces to elevate your look" },
-    { name: "Earrings", slug: "earrings", description: "Beautiful earrings for every style" },
-    { name: "Bracelets", slug: "bracelets", description: "Delicate bracelets to adorn your wrist" },
-    { name: "Anklets", slug: "anklets", description: "Charming anklets for a touch of elegance" },
-  ];
-
-  for (const cat of categories) {
-    await prisma.category.upsert({
-      where: { slug: cat.slug },
-      update: {},
-      create: cat,
-    });
-  }
-
-  // Create sample products
-  const ringsCategory = await prisma.category.findUnique({ where: { slug: "rings" } });
-  const necklacesCategory = await prisma.category.findUnique({ where: { slug: "necklaces" } });
-  const earringsCategory = await prisma.category.findUnique({ where: { slug: "earrings" } });
-
-  if (ringsCategory) {
-    await prisma.product.upsert({
-      where: { slug: "gold-diamond-ring" },
-      update: {},
-      create: {
-        name: "Gold Diamond Ring",
-        slug: "gold-diamond-ring",
-        description: "A stunning 18k gold ring featuring a brilliant cut diamond.",
-        price: 15000,
-        stock: 10,
-        images: JSON.stringify(["/uploads/ring1.jpg"]),
-        featured: true,
-        categoryId: ringsCategory.id,
-      },
-    });
-    await prisma.product.upsert({
-      where: { slug: "rose-gold-band" },
-      update: {},
-      create: {
-        name: "Rose Gold Band",
-        slug: "rose-gold-band",
-        description: "Elegant rose gold band with intricate detailing.",
-        price: 8500,
-        stock: 15,
-        images: JSON.stringify(["/uploads/ring2.jpg"]),
-        featured: false,
-        categoryId: ringsCategory.id,
-      },
-    });
-  }
-
-  if (necklacesCategory) {
-    await prisma.product.upsert({
-      where: { slug: "pearl-pendant-necklace" },
-      update: {},
-      create: {
-        name: "Pearl Pendant Necklace",
-        slug: "pearl-pendant-necklace",
-        description: "A timeless pearl pendant on a delicate gold chain.",
-        price: 12000,
-        stock: 8,
-        images: JSON.stringify(["/uploads/necklace1.jpg"]),
-        featured: true,
-        categoryId: necklacesCategory.id,
-      },
-    });
-  }
-
-  if (earringsCategory) {
-    await prisma.product.upsert({
-      where: { slug: "crystal-drop-earrings" },
-      update: {},
-      create: {
-        name: "Crystal Drop Earrings",
-        slug: "crystal-drop-earrings",
-        description: "Sparkling crystal drop earrings perfect for special occasions.",
-        price: 6500,
-        stock: 20,
-        images: JSON.stringify(["/uploads/earring1.jpg"]),
-        featured: false,
-        categoryId: earringsCategory.id,
-      },
-    });
-  }
-
-  console.log("Seed completed successfully!");
+  console.log("✅ Seed complete");
 }
 
 main()
