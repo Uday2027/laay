@@ -1,0 +1,194 @@
+@import "tailwindcss";
+
+@theme inline {
+  /* Luxury palette from LAAE brand */
+  --color-umber: #2C1A0E;
+  --color-walnut: #6B4F35;
+  --color-gold: #9A7B5C;
+  --color-sandstone: #C4A97D;
+  --color-linen: #E8DBC8;
+  --color-ivory: #FAF6EE;
+  --color-cream: #F5ECD7;
+  --color-noir: #1C1C1C;
+  --color-pearl: #D4B896;
+
+  /* Legacy aliases for smooth migration */
+  --color-charcoal: #2C1A0E;
+  --color-gold-light: #C4A97D;
+  --color-gold-dark: #6B4F35;
+  --color-gold-muted: #E8DBC8;
+
+  /* Fonts */
+  --font-serif: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Montserrat', ui-sans-serif, system-ui, sans-serif;
+
+  /* Elegant shadows */
+  --shadow-soft: 0 2px 20px rgba(0, 0, 0, 0.04);
+  --shadow-medium: 0 4px 30px rgba(0, 0, 0, 0.06);
+  --shadow-strong: 0 8px 40px rgba(0, 0, 0, 0.08);
+  --shadow-gold: 0 4px 20px rgba(201, 169, 98, 0.15);
+}
+
+/* Base styles */
+body {
+  background-color: var(--color-ivory);
+  color: var(--color-umber);
+  font-family: var(--font-sans);
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Serif headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-serif);
+}
+
+/* Selection */
+::selection {
+  background-color: var(--color-linen);
+  color: var(--color-umber);
+}
+
+/* Custom scrollbar - minimal elegant */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-sandstone);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gold);
+}
+
+/* Elegant underline animation for links */
+.link-underline {
+  position: relative;
+}
+
+.link-underline::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background-color: var(--color-gold);
+  transition: width 0.3s ease;
+}
+
+.link-underline:hover::after {
+  width: 100%;
+}
+
+/* Elegant button styles */
+.btn-primary {
+  background-color: var(--color-umber);
+  color: var(--color-cream);
+  padding: 14px 28px;
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.btn-primary:hover {
+  background-color: var(--color-walnut);
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: var(--color-gold);
+  padding-bottom: 2px;
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-bottom: 0.5px solid var(--color-sandstone);
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.btn-outline:hover {
+  color: var(--color-umber);
+  border-color: var(--color-umber);
+}
+
+/* Card hover effect */
+.card-elegant {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-elegant:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-strong);
+}
+
+/* Image zoom on hover */
+.img-zoom {
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.img-zoom:hover {
+  transform: scale(1.05);
+}
+
+/* Elegant divider */
+.divider-gold {
+  width: 60px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-gold), transparent);
+}
+
+/* Smooth fade in animation */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.animate-fade-up {
+  animation: fadeUp 0.8s ease both;
+}
+
+.animate-marquee {
+  animation: marquee 18s linear infinite;
+}
+
+/* Stagger children */
+.stagger-children > * {
+  opacity: 0;
+  animation: fadeUp 0.5s ease forwards;
+}
+
+.stagger-children > *:nth-child(1) { animation-delay: 0.05s; }
+.stagger-children > *:nth-child(2) { animation-delay: 0.1s; }
+.stagger-children > *:nth-child(3) { animation-delay: 0.15s; }
+.stagger-children > *:nth-child(4) { animation-delay: 0.2s; }
+.stagger-children > *:nth-child(5) { animation-delay: 0.25s; }
+.stagger-children > *:nth-child(6) { animation-delay: 0.3s; }

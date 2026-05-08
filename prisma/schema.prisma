@@ -1,0 +1,98 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(USER)
+  orders    Order[]
+  createdAt DateTime @default(now())
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  slug        String    @unique
+  description String?
+  image       String?
+  products    Product[]
+  createdAt   DateTime  @default(now())
+}
+
+model Product {
+  id          String      @id @default(cuid())
+  name        String
+  slug        String      @unique
+  description String?
+  price       Float
+  stock       Int         @default(0)
+  images      String      // JSON array of image paths
+  featured    Boolean     @default(false)
+  category    Category    @relation(fields: [categoryId], references: [id])
+  categoryId  String
+  orderItems  OrderItem[]
+  createdAt   DateTime    @default(now())
+}
+
+model Order {
+  id                String      @id @default(cuid())
+  user              User?       @relation(fields: [userId], references: [id])
+  userId            String?
+  name              String
+  phone             String
+  address           String
+  total             Float
+  discountBreakdown String      // JSON array
+  status            OrderStatus @default(PENDING)
+  paymentMethod     PaymentMethod @default(COD)
+  bkashRef          String?
+  deliveryCharge    Float       @default(100)
+  orderItems        OrderItem[]
+  createdAt         DateTime    @default(now())
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId   String
+  product   Product @relation(fields: [productId], references: [id])
+  productId String
+  name      String
+  price     Float
+  quantity  Int
+}
+
+model SiteConfig {
+  id             String  @id @default(cuid())
+  siteTitle      String  @default("LAAE Jewelry")
+  bkashNumber    String  @default("01XXXXXXXXX")
+  bkashQRCode    String?
+  deliveryCharge Float   @default(100)
+  updatedAt      DateTime @updatedAt
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  COD
+  BKASH
+}
